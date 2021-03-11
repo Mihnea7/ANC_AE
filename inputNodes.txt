@@ -1,3 +1,7 @@
-test
-testing
-tested
+5
+6
+A 0 1 5 inf inf 
+B 1 0 3 inf 9
+C 5 3 0 4 inf
+D inf inf 4 0 2
+E inf 9 inf 2 0
