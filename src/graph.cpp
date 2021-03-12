@@ -1,36 +1,43 @@
 #include "include/graph.h"
 
-Graph::Graph() :V(0), E(0) {}
+Graph::Graph(int nV, int nE) : V(nV), E(nE) {}
 
 Graph::~Graph()
 {
-    for (auto &node : nodes)
+    //delete edges;
+    for (auto &edge : edges)
     {
-        delete node;
+        delete edge;
     }
 }
 
-void Graph::add_node(Node *node)
+/* void Graph::add_edge(int index, int source, int dest, int weight)
 {
-    nodes.push_back(node);
-    V +=1;
-}
+    edges[index].source = source;
+    edges[index].dest = dest;
+    edges[index].weight = weight;
+} */
 
 void Graph::add_edge(Edge *edge)
 {
     edges.push_back(edge);
-    E +=1;
 }
 
-void Graph::print()
+bool Graph::check_edge(Edge *other)
 {
-    for (auto node : nodes)
+    for (auto &edge : edges)
     {
-        std::cout << node->name << " ";
-        for (auto i : node->dist)
-        {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
+        if (*other == *edge)
+            return true;
     }
+    return false;
+}
+
+void Graph::print_edges()
+{
+    for (auto &edge : edges)
+    {
+        std::cout << std::endl<< edge->source << " " << edge->dest << " " << edge->weight;
+    }
+    std::cout<<std::endl;
 }

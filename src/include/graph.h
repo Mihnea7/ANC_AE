@@ -3,19 +3,20 @@
 #include <iostream>
 #include <vector>
 #include <limits>
-#include "node.h"
 #include "edge.h"
 class Graph
 {
-    public:
-    Graph();
+public:
+    Graph(int V, int E);
     ~Graph();
-    void add_node(Node *node);
+    //void add_edge(int index, int source, int dest, int weight);
     void add_edge(Edge *edge);
-    void print();
+    bool check_edge( Edge *other);
+    void print_edges();
+    int get_nr_edges() {return edges.size();}
+    Edge& get_edge_at(int index) {return *edges[index];}
 
-    private:
-    std::vector<Node*> nodes;
-    std::vector<Edge*> edges;
+private:
     int V, E;
+    std::vector<Edge*> edges;
 };

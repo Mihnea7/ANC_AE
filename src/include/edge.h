@@ -1,7 +1,9 @@
 #pragma once
-#include "node.h"
-class Edge {
-    public:
-    int weight;
-    Node *source, *dest;
+#include <iostream>
+class Edge
+{
+public:
+    Edge(int, int, int);
+    bool operator==(const Edge &other);
+    int source, dest, weight;
 };
