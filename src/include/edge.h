@@ -1,9 +1,23 @@
 #pragma once
+class Node;
+#include "node.h"
 #include <iostream>
 class Edge
 {
 public:
-    Edge(int, int, int);
-    bool operator==(const Edge &other);
-    int source, dest, weight;
+    Edge(Node *, Node *, int);
+    ~Edge();
+    Node *get_source() { return source; }
+    Node *get_dest() { return dest; }
+    int get_weight() { return weight; }
+    void set_weight(int weight) { this->weight = weight; }
+    void set_source(Node *source) { this->source = source; }
+    void set_dest(Node *dest) { this->dest = dest; }
+    bool operator==(Edge &);
+    void print();
+
+private:
+    Node *source;
+    Node *dest;
+    int weight;
 };

@@ -1,27 +1,58 @@
-/*
-
-Mihnea Maldaianu 2289803M
-
-*/
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <sstream>
-#include <limits>
 #include "include/graph.h"
-using string = std::string;
+#include <fstream>
+#include <sstream>
+void read_node_edges(std::ifstream &, Graph &);
 
 int main()
 {
-    string line;
-    int V, E;
-    std::ifstream inputFile("inputNodes.txt");
-    inputFile >> V >> E;
-    Graph graph(V, E);
-    std::vector<std::vector<int>> data;
+    std::string fileName;
+    std::cout << "Please type in the name of the input file (include extension too): \n";
+    std::cin >> fileName;
+    std::ifstream inputFile(fileName);
+    if(!inputFile.good()) {
+        std::cout<<"File does not exist; exiting program\n";
+        return -1;
+    }
+    std::string target;
+    Graph graph;
 
-    // Stage 1: read from file and generate vectors for each row
+    read_node_edges(inputFile, graph);
+    std::cout << "Number of nodes: " << graph.get_node_size() << std::endl;
+    std::cout << "Number of edges: " << graph.get_nr_edges() / 2 << std::endl;
+
+    std::cout << "Select which graph you would like to calculate distances: " << std::endl;
+    std::cin >> target;
+    Node *source_node = graph.get_existing_node(target);
+
+
+    int iters;
+    std::cout << "How many iterations would you like the algorithm to run for? \n";
+    std::cin >> iters;
+
+    int fail_prob;
+    std::cout << "Enter the probability that a link will fail at random? (0 - 100) \n";
+    std::cin >> fail_prob;
+
+    char split_horizon;
+    std::cout << "Turn on split horizon functionality? (Y/n) \n";
+    std::cin >> split_horizon;
+    switch (split_horizon)
+    {
+    case 'Y':
+        graph.bellman_ford_sh(source_node, iters, fail_prob);
+        break;
+    case 'n':
+        graph.bellman_ford(source_node, iters, fail_prob);
+        break;
+    }
+
+    std::cout << "\n\n";
+}
+
+void read_node_edges(std::ifstream &inputFile, Graph &graph)
+{
+    std::string line;
+
     if (inputFile.is_open())
     {
         while (getline(inputFile, line))
@@ -29,71 +60,54 @@ int main()
             if (line.find("#") == 0)
                 continue;
 
-            std::vector<string> node_dist;
-            std::vector<int> res;
+            std::vector<std::string> params;
             std::istringstream iss(line);
             for (std::string s; iss >> line;)
-                node_dist.push_back(line);
+                params.push_back(line);
 
-            for (auto &w : node_dist)
+            Node *source = graph.get_existing_node(params[0]);
+            Node *dest = graph.get_existing_node(params[1]);
+
+            if (source == nullptr && dest == nullptr)
             {
-                if (w.compare("inf") != 0)
-                    res.push_back(std::stoi(w));
-                else
-                    res.push_back(INT32_MAX);
+                source = new Node(params[0]);
+                dest = new Node(params[1]);
+                graph.add_node(source);
+                graph.add_node(dest);
+                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
+                source->add_neighbour(dest);
+                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
+                dest->add_neighbour(source);
             }
-            data.push_back(res);
+            else if (source && dest == nullptr)
+            {
+                dest = new Node(params[1]);
+                graph.add_node(dest);
+                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
+                source->add_neighbour(dest);
+                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
+                dest->add_neighbour(source);
+            }
+            else if (source == nullptr && dest)
+            {
+                source = new Node(params[0]);
+                graph.add_node(source);
+                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
+                source->add_neighbour(dest);
+                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
+                dest->add_neighbour(source);
+            }
+            else if (source && dest)
+            {
+                graph.add_node(source);
+                graph.add_node(dest);
+                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
+                source->add_neighbour(dest);
+                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
+                dest->add_neighbour(source);
+            }
         }
+        std::cout << "Read from file successfully!" << std::endl;
         inputFile.close();
     }
-    else
-        std::cout << "Unable to open input file";
-
-    // Stage 2: generate instances of edges to the current graph from Stage 1
-    for (int i = 0; i < static_cast<int>(data.size()); i++)
-    {
-        for (int j = 0; j < static_cast<int>(data[i].size()); j++)
-        {
-            if (data[i][j] == 0 || data[i][j] == INT32_MAX)
-                continue;
-
-            Edge *edge = new Edge(i - 1, j, data[i][j]);
-
-            if (!graph.check_edge(edge))
-                graph.add_edge(edge);
-            else
-                delete edge;
-        }
-    }
-    graph.print_edges();
-    std::cout << " " << graph.get_nr_edges();
-
-    // Stage 3: Bellman Ford algorithm - no step backwards
-    int src;
-    std::cout << std::endl
-              << "Please enter on which node you want to calculate. (0 to " << V - 1 << "): ";
-    std::cin >> src;
-    int dist[V];
-    for (int i = 0; i < V; i++)
-        dist[i] = INT32_MAX;
-    dist[src] = 0;
-    for (int i = 0; i < V ; i++)
-    {
-        for (int j = 0; j < E; j++)
-        {
-            int u = graph.get_edge_at(j).source;
-            int v = graph.get_edge_at(j).dest;
-            int weight = graph.get_edge_at(j).weight;
-            if (dist[u] != INT32_MAX && dist[u] + weight < dist[v])
-                dist[v] = dist[u] + weight;
-
-            u = graph.get_edge_at(j).dest;
-            v = graph.get_edge_at(j).source;
-            weight = graph.get_edge_at(j).weight;
-            if (dist[u] != INT32_MAX && dist[u] + weight < dist[v])
-                dist[v] = dist[u] + weight;
-        }
-    }
-    for (auto &d : dist)
-        std::cout << d<<std::endl;
 }

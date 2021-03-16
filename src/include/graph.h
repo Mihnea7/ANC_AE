@@ -1,22 +1,26 @@
 #pragma once
-#include <string>
 #include <iostream>
-#include <vector>
-#include <limits>
 #include "edge.h"
+#include <algorithm>
 class Graph
 {
 public:
-    Graph(int V, int E);
-    ~Graph();
-    //void add_edge(int index, int source, int dest, int weight);
-    void add_edge(Edge *edge);
-    bool check_edge( Edge *other);
-    void print_edges();
-    int get_nr_edges() {return edges.size();}
-    Edge& get_edge_at(int index) {return *edges[index];}
+    void add_node(Node *);
+    void bellman_ford(Node *, int, int);
+    void bellman_ford_sh(Node *, int, int);
+    bool is_in_graph(Node *);
+    size_t get_node_size() { return node_list.size(); }
+    size_t get_nr_edges();
+    Node *get_existing_node(std::string);
+    void destroy_link(Node*, Node *, Node *);
 
 private:
-    int V, E;
-    std::vector<Edge*> edges;
+    std::vector<Node *> node_list;
+    std::vector<Node *> deleted_list;
+    void initialise(Node *);
+    void update(Edge *, Node *, Node *);
+    void print_nodes();
+    void neighbour_exchange(Node *, int &, int);
+    void neighbour_exchange(Node*);
+    Node* get_random_node(std::vector<Node *>);
 };
