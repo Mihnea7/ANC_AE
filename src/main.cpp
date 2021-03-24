@@ -22,6 +22,9 @@ int main()
     std::cout << "Number of edges: " << graph.get_nr_edges() / 2 << std::endl;
 
     std::cout << "Select which node/vertex you would like to calculate distances for : " << std::endl;
+    std::cout << "Available nodes: ";
+    graph.print_all_node_names();
+    std::cout << "\n";
     std::cin >> target;
     Node *source_node = graph.get_existing_node(target);
 

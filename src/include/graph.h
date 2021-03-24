@@ -6,6 +6,7 @@ class Graph
 {
 public:
     void add_node(Node *);
+    void print_all_node_names();
     void bellman_ford(Node *, int, int);
     void bellman_ford_sh(Node *, int, int);
     bool is_in_graph(Node *);
@@ -13,6 +14,8 @@ public:
     size_t get_nr_edges();
     Node *get_existing_node(std::string);
     void destroy_link(Node*, Node *, Node *);
+    void destroy_link_sh(Node *, Node *, Node *);
+
 
 private:
     std::vector<Node *> node_list;
