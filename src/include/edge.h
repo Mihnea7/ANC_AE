@@ -6,7 +6,7 @@ class Edge
 {
 public:
     Edge(Node *, Node *, int);
-    ~Edge();
+    ~Edge() = default;
     Node *get_source() { return source; }
     Node *get_dest() { return dest; }
     int get_weight() { return weight; }

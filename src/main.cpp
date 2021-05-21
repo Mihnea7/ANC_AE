@@ -56,10 +56,8 @@ int main()
         graph.bellman_ford(source_node, iters, fail_prob);
         break;
     }
-
     std::cout << "\n \n";
     std::cout << "The program will terminate once you press any key...\n";
-    system("PAUSE");
 }
 
 void read_node_edges(std::ifstream &inputFile, Graph &graph)
@@ -112,8 +110,7 @@ void read_node_edges(std::ifstream &inputFile, Graph &graph)
             }
             else if (source && dest)
             {
-                graph.add_node(source);
-                graph.add_node(dest);
+
                 source->add_edge(new Edge(source, dest, std::stoi(params[2])));
                 source->add_neighbour(dest);
                 dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
@@ -123,4 +120,10 @@ void read_node_edges(std::ifstream &inputFile, Graph &graph)
         std::cout << "Read from file successfully!" << std::endl;
         inputFile.close();
     }
+}
+
+void clear_ptr(Node *&node)
+{
+    delete node;
+    node = nullptr;
 }

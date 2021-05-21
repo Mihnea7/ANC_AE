@@ -2,11 +2,6 @@
 
 Edge::Edge(Node *src, Node *dst, int w) : source(src), dest(dst), weight(w) {}
 
-Edge::~Edge()
-{
-    delete source;
-    delete dest;
-}
 
 bool Edge::operator==(Edge &other)
 {

@@ -1,5 +1,21 @@
 #include "include/graph.h"
 
+Graph::~Graph()
+{
+    for (auto *node : node_list)
+    {
+        delete node;
+    }
+    node_list.clear();
+    node_list.resize(0);
+    for (auto *node : deleted_list)
+    {
+        delete node;
+    }
+    deleted_list.clear();
+    deleted_list.resize(0);
+}
+
 void Graph::add_node(Node *new_node)
 {
     if (!is_in_graph(new_node))

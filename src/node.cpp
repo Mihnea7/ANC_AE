@@ -4,15 +4,14 @@ Node::Node(std::string node_name) : name(node_name) {}
 
 Node::~Node()
 {
-    for (auto &node : neighbour_list)
-    {
-        delete node;
-    }
-
-    for (auto &edge : edge_list)
+    for (auto *edge : edge_list)
     {
         delete edge;
     }
+    neighbour_list.clear();
+    edge_list.clear();
+    neighbour_list.resize(0);
+    edge_list.resize(0);
 }
 
 bool Node::operator==(Node *other)
@@ -29,6 +28,7 @@ void Node::add_neighbour(Node *new_node)
 
 void Node::add_edge(Edge *new_edge)
 {
+
     edge_list.push_back(new_edge);
 }
 
@@ -39,6 +39,7 @@ void Node::remove_edge(Edge *edge)
     {
         edge_list.erase(edge_index);
         std::cout << "Edge removed successfully.\n";
+        delete edge;
     }
 }
 

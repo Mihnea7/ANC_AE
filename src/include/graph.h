@@ -5,6 +5,7 @@
 class Graph
 {
 public:
+    ~Graph();
     void add_node(Node *);
     void print_all_node_names();
     void bellman_ford(Node *, int, int);
