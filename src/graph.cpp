@@ -8,10 +8,6 @@ Graph::~Graph()
     }
     node_list.clear();
     node_list.resize(0);
-    for (auto *node : deleted_list)
-    {
-        delete node;
-    }
     deleted_list.clear();
     deleted_list.resize(0);
 }

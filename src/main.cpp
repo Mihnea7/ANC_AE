@@ -1,7 +1,4 @@
-#include "include/graph.h"
-#include <fstream>
-#include <sstream>
-void read_node_edges(std::ifstream &, Graph &);
+#include "include/NodeFactory.h"
 
 int main()
 {
@@ -16,8 +13,8 @@ int main()
     }
     std::string target;
     Graph graph;
-
-    read_node_edges(inputFile, graph);
+    NodeFactory node_factory;
+    node_factory.generate_nodes(inputFile, graph);
     std::cout << "Number of nodes: " << graph.get_node_size() << std::endl;
     std::cout << "Number of edges: " << graph.get_nr_edges() / 2 << std::endl;
 
@@ -58,72 +55,4 @@ int main()
     }
     std::cout << "\n \n";
     std::cout << "The program will terminate once you press any key...\n";
-}
-
-void read_node_edges(std::ifstream &inputFile, Graph &graph)
-{
-    std::string line;
-
-    if (inputFile.is_open())
-    {
-        while (getline(inputFile, line))
-        {
-            if (line.find("#") == 0)
-                continue;
-
-            std::vector<std::string> params;
-            std::istringstream iss(line);
-            for (std::string s; iss >> line;)
-                params.push_back(line);
-
-            Node *source = graph.get_existing_node(params[0]);
-            Node *dest = graph.get_existing_node(params[1]);
-
-            if (source == nullptr && dest == nullptr)
-            {
-                source = new Node(params[0]);
-                dest = new Node(params[1]);
-                graph.add_node(source);
-                graph.add_node(dest);
-                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
-                source->add_neighbour(dest);
-                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
-                dest->add_neighbour(source);
-            }
-            else if (source && dest == nullptr)
-            {
-                dest = new Node(params[1]);
-                graph.add_node(dest);
-                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
-                source->add_neighbour(dest);
-                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
-                dest->add_neighbour(source);
-            }
-            else if (source == nullptr && dest)
-            {
-                source = new Node(params[0]);
-                graph.add_node(source);
-                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
-                source->add_neighbour(dest);
-                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
-                dest->add_neighbour(source);
-            }
-            else if (source && dest)
-            {
-
-                source->add_edge(new Edge(source, dest, std::stoi(params[2])));
-                source->add_neighbour(dest);
-                dest->add_edge(new Edge(dest, source, std::stoi(params[2])));
-                dest->add_neighbour(source);
-            }
-        }
-        std::cout << "Read from file successfully!" << std::endl;
-        inputFile.close();
-    }
-}
-
-void clear_ptr(Node *&node)
-{
-    delete node;
-    node = nullptr;
 }
